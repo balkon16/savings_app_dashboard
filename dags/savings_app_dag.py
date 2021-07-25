@@ -9,9 +9,11 @@ dag = DAG(
     start_date=days_ago(1)
 )
 
-start = DummyOperator(task_id="START", dag=dag)
-end = DummyOperator(task_id="END", dag=dag)
+start = DummyOperator(
+    task_id="START",
+    dag=dag)
+end = DummyOperator(
+    task_id="END",
+    dag=dag)
 
 start >> end
-
-

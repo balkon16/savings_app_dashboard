@@ -16,3 +16,10 @@ Virtual environment:
 ```shell
 . ./deployment/start_venv.sh
 ```
+
+Deploy DAG:
+```shell
+./deployment/deploy_dag.sh
+```
+
+Data files are located 
