@@ -22,4 +22,15 @@ Deploy DAG:
 ./deployment/deploy_dag.sh
 ```
 
-Data files are located 
+![](./resources/db_login_form.png)
+
+Łączenie się z bazą:
+```python
+import mysql.connector
+cnx = mysql.connector.connect(user="root", password="example", host="localhost", database="my_test_database")
+```
+
+Baza MySQL:
+```shell
+docker-compose -f deployment/target-database-stack.yml up
+```

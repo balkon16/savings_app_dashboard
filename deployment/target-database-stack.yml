@@ -1,0 +1,19 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+
+  mysql-db:
+    image: mysql:8.0.26
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: example # TODO: zrobić zgodnie z zalecaniami -> https://docs.docker.com/engine/swarm/secrets/
+
+  adminer:
+    image: adminer:4.6.3
+    restart: always
+    ports:
+      - 8088:8080
