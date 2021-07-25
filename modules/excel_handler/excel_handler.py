@@ -17,35 +17,30 @@ class ExcelHandler:
     def __init__(self, configuration: Dict[str, Any]) -> None:
         self.configuration = configuration
 
-    def _is_entity_supported(self, entity: str) -> None:
-        supported_entities = set(self.configuration['entities'].keys())
-        if entity not in supported_entities:
-            raise NotImplementedError(f"Entity '{entity}' not supported")
-
-    # TODO: testy do metody `get_entity_and_date
     @staticmethod
     def get_entity_and_date(file_name: str, supported_entities: List[str]) -> Tuple[str, datetime.datetime]:
         regex = f"(?P<entity>{'|'.join(supported_entities)})_(?P<date>[0-9]{{8}}).xlsx"
         match = re.search(regex, file_name)
+        if not match:
+            raise ValueError(f"{file_name} contains an unsupported entity.")
         return match.group("entity"), dt.datetime.strptime(match.group("date"), "%Y%m%d")
 
-    # TODO: testy do metody `read_excel_file_as_dataframe`
     def read_excel_file_as_dataframe(self, file_name: str) -> pd.DataFrame:
         if not Validator.is_excel_file(file_name):
-            raise ValueError(f"Not an Excel file: {file_name}")  # TODO: test na wyjątek
+            raise ValueError(f"Not an Excel file: {file_name}")
 
-        entity = os.path.basename(file_name).split(".")[0]
+        entity, date_obj = ExcelHandler.get_entity_and_date(file_name, self.configuration['entities'].keys())
+        entity_settings = self.configuration['entities'][entity]
 
-        # self._is_entity_supported()
-
-        # TODO: sprawdzić rozszerzenie pliku -> jeżeli inne niż xlsx -> wyjątek -> napisać test
-        # TODO: sprawdzić entity -> w konfiguracji wypisać te wspierane -> napisać test
-        # entity_settings = self.configuration[entity]
         data_file_path = os.path.join(self.configuration['directory'], file_name)
-        df = pd.read_excel(data_file_path
-                           # , dtype=entity_settings['dtype']
-                           ) #TODO: dodać argument dtypes
-        df['date'] = ExcelHandler.convert_excel_date_to_date(df['date'])
+
+        df = pd.read_excel(data_file_path, dtype=entity_settings['dtype'])
+
+        # convert Excel dates such as 44402 to 2021-07-25
+        date_columns = entity_settings.get("date_columns") or []
+        for date_column in date_columns:
+            df[date_column] = ExcelHandler.convert_excel_date_to_date(df[date_column])
+
         return df
 
     @staticmethod
@@ -54,4 +49,4 @@ class ExcelHandler:
 
     @staticmethod
     def convert_excel_date_to_date(column: Series) -> Series:
-        return pd.TimedeltaIndex(column, unit="d") + dt.datetime(1900, 1, 1)
+        return pd.TimedeltaIndex(column, unit="d") + dt.datetime(1899, 12, 30)

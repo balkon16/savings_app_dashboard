@@ -1,6 +1,6 @@
 {
   "excel": {
-    "directory": "/home/pawel/Documents/INSYNC_backup/BACKUP_LUBUNTU/Backup/savings_dashboard_v2/data_files",
+    "directory": "/home/pawel/Documents/INSYNC_backup/BACKUP_LUBUNTU/Backup/savings_dashboard_v2/tests/test_data_files",
     "entities": {
       "exchange_rates": {
         "dtype": {
